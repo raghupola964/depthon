@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+import com.depthon.domain.Division;
+import com.depthon.domain.Subdivision;
+
 @Data
 @Entity
 @Table(name = "posts")
@@ -26,6 +29,12 @@ public class Post {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PostStatus status = PostStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    private Division division;
+
+    @Enumerated(EnumType.STRING)
+    private Subdivision subdivision;
 
     @Column(columnDefinition = "TEXT")
     private String moderationFeedback;

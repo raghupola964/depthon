@@ -1,5 +1,6 @@
 package com.depthon.service;
 
+import com.depthon.domain.Subdivision;
 import com.depthon.dto.CreatePostRequest;
 import com.depthon.dto.JudgeVerdict;
 import com.depthon.model.Post;
@@ -31,6 +32,11 @@ public class PostService {
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
         post.setAuthor(author);
+
+        // A post inherits its author's field - no cross-posting, no mismatch
+        post.setSubdivision(author.getSubdivision());
+        post.setDivision(author.getDivision());
+
         post.setStatus(Post.PostStatus.PENDING);
 
         Post saved = postRepository.save(post);
@@ -56,5 +62,10 @@ public class PostService {
         User author = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return postRepository.findByAuthorIdOrderByCreatedAtDesc(author.getId());
+    }
+
+    public List<Post> getFeedForSubdivision(Subdivision subdivision) {
+        return postRepository.findByStatusAndSubdivisionOrderByCreatedAtDesc(
+                Post.PostStatus.APPROVED, subdivision);
     }
 }

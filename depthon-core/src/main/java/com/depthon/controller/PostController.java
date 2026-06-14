@@ -4,6 +4,8 @@ import com.depthon.dto.CreatePostRequest;
 import com.depthon.dto.PostResponse;
 import com.depthon.model.Post;
 import com.depthon.service.PostService;
+import com.depthon.service.UserService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,12 +13,16 @@ import java.util.List;
 import java.util.Map;
 import java.security.Principal;
 
+import com.depthon.model.User;
+
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
+
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> createPost(
@@ -49,5 +55,14 @@ public class PostController {
                 postService.getMyPosts(email).stream()
                         .map(PostResponse::from)
                         .toList());
+    }
+
+    @GetMapping("/feed/mine")
+    public ResponseEntity<List<PostResponse>> myFeed(Principal principal) {
+        String email = principal.getName();              // who's asking (from the token)
+        User user = userService.findByEmail(email);      // look them up
+        List<Post> posts = postService.getFeedForSubdivision(user.getSubdivision());
+        return ResponseEntity.ok(
+                posts.stream().map(PostResponse::from).toList());
     }
 }
