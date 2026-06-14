@@ -36,7 +36,15 @@ public class UserService {
 
         // Encrypt the password before saving - never store plain text
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+// Validate the field choice
+        if (request.getSubdivision() == null) {
+            throw new RuntimeException("Please choose your profession (subdivision)");
+        }
 
+        user.setSubdivision(request.getSubdivision());
+        // The division is DERIVED from the subdivision - no cross-posting, no mismatch
+        user.setDivision(request.getSubdivision().getDivision());
+        
         // Save to PostgreSQL and return the saved user
         return userRepository.save(user);
     }
