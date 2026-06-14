@@ -1,0 +1,23 @@
+# Secrets - NEVER commit these
+.env
+*.env
+application-secrets.properties
+
+# Java / Maven
+target/
+*.class
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node / React
+node_modules/
+dist/
+
+# IDE / OS
+.idea/
+.vscode/
+*.log
+.DS_Store
