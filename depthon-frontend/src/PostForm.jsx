@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { getToken } from "./auth";
+
 function PostForm({ onPostJudged }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -12,8 +14,11 @@ function PostForm({ onPostJudged }) {
 
     fetch("http://localhost:8080/api/posts", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content, authorEmail: "raghu@depthon.com" }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + getToken(),
+      },
+      body: JSON.stringify({ title, content}),
     })
       .then(async (response) => {
         const data = await response.json();

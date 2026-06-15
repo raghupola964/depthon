@@ -1,16 +1,30 @@
 import { useState, useEffect } from "react";
 import PostForm from "./PostForm";
+import Login from "./Login";
+import Signup from "./Signup";
+import { getToken, clearToken, isLoggedIn } from "./auth";
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(isLoggedIn());  // are we logged in?
+  const [authScreen, setAuthScreen] = useState("login");   // "login" or "signup"
+
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   function loadFeed() {
-    fetch("http://localhost:8080/api/posts/feed")
-      .then((response) => {
-        if (!response.ok) throw new Error("Feed request failed: " + response.status);
-        return response.json();
+    fetch("http://localhost:8080/api/posts/feed/mine", {
+      headers: { "Authorization": "Bearer " + getToken() },  // attach the token
+    })
+      .then(async (response) => {
+        if (response.status === 401 || response.status === 403) {
+          // token missing or expired -> log out
+          handleLogout();
+          throw new Error("Session expired. Please log in again.");
+        }
+        const data = await response.json();
+        if (!response.ok) throw new Error("Could not load feed");
+        return data;
       })
       .then((data) => {
         setPosts(data);
@@ -22,12 +36,42 @@ function App() {
       });
   }
 
+  // Load the feed whenever we become logged in
   useEffect(() => {
-    loadFeed();
-  }, []);
+    if (loggedIn) loadFeed();
+  }, [loggedIn]);
 
+  function handleLogout() {
+    clearToken();
+    setLoggedIn(false);
+    setPosts([]);
+  }
+
+  // ---- NOT LOGGED IN: show login or signup ----
+  if (!loggedIn) {
+    if (authScreen === "login") {
+      return (
+        <div className="min-h-screen bg-[#0a0a0b] text-zinc-100">
+          <Login
+            onLoggedIn={() => setLoggedIn(true)}
+            onSwitchToSignup={() => setAuthScreen("signup")}
+          />
+        </div>
+      );
+    }
+    return (
+      <div className="min-h-screen bg-[#0a0a0b] text-zinc-100">
+        <Signup
+          onSignedUp={() => setLoggedIn(true)}
+          onSwitchToLogin={() => setAuthScreen("login")}
+        />
+      </div>
+    );
+  }
+
+  // ---- LOGGED IN: show the feed ----
   return (
-    <div className="min-h-screen bg-[#0a0a0b]">
+    <div className="min-h-screen bg-[#0a0a0b] text-zinc-100">
       <div className="mx-auto max-w-2xl px-5 py-10">
 
         {/* Header */}
@@ -36,20 +80,25 @@ function App() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-white to-zinc-500 text-base font-bold text-black">D</div>
             <span className="text-xl font-bold tracking-tight">Depthon</span>
           </div>
-          <span className="text-xs uppercase tracking-wider text-zinc-500">No Fluff</span>
+          <button
+            onClick={handleLogout}
+            className="text-xs uppercase tracking-wider text-zinc-500 hover:text-zinc-200 transition-colors"
+          >
+            Log out
+          </button>
         </div>
 
         {/* Post form */}
         <PostForm onPostJudged={loadFeed} />
 
         {/* Feed label */}
-        <div className="text-xs uppercase tracking-wider text-zinc-600 mb-4">The Feed</div>
+        <div className="text-xs uppercase tracking-wider text-zinc-600 mb-4">Your Feed</div>
 
         {/* States */}
-        {loading && <p className="text-sm text-zinc-500">Loading the feed...</p>}
-        {error && <p className="text-sm text-red-400">Error: {error}</p>}
+        {loading && <p className="text-sm text-zinc-500">Loading your feed...</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
         {!loading && !error && posts.length === 0 && (
-          <p className="text-sm text-zinc-600">No approved posts yet. The feed is empty.</p>
+          <p className="text-sm text-zinc-600">No posts in your field yet. Be the first to share something.</p>
         )}
 
         {/* Posts */}
