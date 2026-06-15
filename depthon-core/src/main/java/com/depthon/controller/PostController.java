@@ -50,9 +50,10 @@ public class PostController {
     }
 
     @GetMapping("/mine")
-    public ResponseEntity<List<PostResponse>> getMyPosts(@RequestParam String email) {
+    public ResponseEntity<List<PostResponse>> getMyPosts(Principal principal) {
+        User user = userService.findByEmail(principal.getName());
         return ResponseEntity.ok(
-                postService.getMyPosts(email).stream()
+                postService.getMyPosts(user).stream()
                         .map(PostResponse::from)
                         .toList());
     }

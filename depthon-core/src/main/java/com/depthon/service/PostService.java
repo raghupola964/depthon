@@ -58,10 +58,8 @@ public class PostService {
         return postRepository.findByStatusOrderByCreatedAtDesc(Post.PostStatus.APPROVED);
     }
 
-    public List<Post> getMyPosts(String email) {
-        User author = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return postRepository.findByAuthorIdOrderByCreatedAtDesc(author.getId());
+    public List<Post> getMyPosts(User author) {
+        return postRepository.findByAuthorOrderByCreatedAtDesc(author);
     }
 
     public List<Post> getFeedForSubdivision(Subdivision subdivision) {
