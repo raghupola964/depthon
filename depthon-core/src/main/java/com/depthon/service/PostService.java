@@ -68,4 +68,14 @@ public class PostService {
         return postRepository.findByStatusAndSubdivisionOrderByCreatedAtDesc(
                 Post.PostStatus.APPROVED, subdivision);
     }
+
+    public List<Post> getFeedForUser(User user) {
+        // Combine the home field + everything they follow
+        java.util.Set<Subdivision> feedSubdivisions = new java.util.HashSet<>();
+        feedSubdivisions.add(user.getSubdivision());            // home (always included)
+        feedSubdivisions.addAll(user.getFollowedSubdivisions()); // plus follows
+
+        return postRepository.findByStatusAndSubdivisionInOrderByCreatedAtDesc(
+                Post.PostStatus.APPROVED, feedSubdivisions);
+    }
 }
