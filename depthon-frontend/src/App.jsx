@@ -7,6 +7,8 @@ import { getToken, clearToken, isLoggedIn } from "./auth";
 
 import { TAXONOMY } from "./taxonomy";
 
+import MyPosts from "./MyPosts";
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(isLoggedIn());  // are we logged in?
   const [authScreen, setAuthScreen] = useState("login");   // "login" or "signup"
@@ -116,6 +118,12 @@ function App() {
           </div>
           <div className="flex items-center gap-4">
             <button
+              onClick={() => setView("myposts")}
+              className="text-xs uppercase tracking-wider text-zinc-500 hover:text-zinc-200 transition-colors"
+            >
+              My Posts
+            </button>
+            <button
               onClick={() => setView(view === "feed" ? "settings" : "feed")}
               className="text-xs uppercase tracking-wider text-zinc-500 hover:text-zinc-200 transition-colors"
             >
@@ -132,7 +140,7 @@ function App() {
 
         {/* Settings view */}
         {view === "settings" && <Settings onBack={() => { setView("feed"); loadFeed(); }} />}
-
+        {view === "myposts" && <MyPosts onBack={() => { setView("feed"); loadFeed(); }} />}
         {/* Feed view */}
         {view === "feed" && (
           <>
