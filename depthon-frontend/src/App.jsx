@@ -5,6 +5,8 @@ import Signup from "./Signup";
 import Settings from "./Settings";
 import { getToken, clearToken, isLoggedIn } from "./auth";
 
+import { TAXONOMY } from "./taxonomy";
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(isLoggedIn());  // are we logged in?
   const [authScreen, setAuthScreen] = useState("login");   // "login" or "signup"
@@ -14,7 +16,13 @@ function App() {
   const [error, setError] = useState(null);
 
   const [view, setView] = useState("feed");   // "feed" or "settings"
-
+  function labelForSubdivision(subValue) {
+    for (const divKey of Object.keys(TAXONOMY)) {
+      const found = TAXONOMY[divKey].subdivisions.find((s) => s.value === subValue);
+      if (found) return found.label;
+    }
+    return subValue;
+  }
   function loadFeed() {
     fetch("http://localhost:8080/api/posts/feed/mine", {
       headers: { "Authorization": "Bearer " + getToken() },  // attach the token
@@ -121,9 +129,16 @@ function App() {
                 >
                   <h2 className="text-base font-semibold tracking-tight mb-2">{post.title}</h2>
                   <p className="text-sm leading-relaxed text-zinc-400 mb-3">{post.content}</p>
-                  <div className="flex items-center gap-2">
-                    <div className="h-5 w-5 rounded-full border border-white/10 bg-gradient-to-br from-zinc-600 to-zinc-900"></div>
-                    <span className="text-xs text-zinc-500">{post.authorUsername}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="h-5 w-5 rounded-full border border-white/10 bg-gradient-to-br from-zinc-600 to-zinc-900"></div>
+                      <span className="text-xs text-zinc-500">{post.authorUsername}</span>
+                    </div>
+                    {post.subdivision && (
+                      <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-zinc-400">
+                        {labelForSubdivision(post.subdivision)}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}

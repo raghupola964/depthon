@@ -42,6 +42,9 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(nullable = false)
+    private boolean hiddenFromFeed = false;
+
     public enum PostStatus {
         PENDING, APPROVED, REJECTED, NEEDS_REVISION
     }
