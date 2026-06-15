@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import com.depthon.domain.Division;
 import com.depthon.domain.Subdivision;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Entity
 @Table(name = "users")
@@ -33,6 +36,15 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Subdivision subdivision;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "user_followed_subdivisions",
+        joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Enumerated(EnumType.STRING)
+    @Column(name = "subdivision")
+    private Set<Subdivision> followedSubdivisions = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
