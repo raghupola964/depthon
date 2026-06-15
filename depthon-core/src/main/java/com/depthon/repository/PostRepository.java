@@ -16,7 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByStatusAndSubdivisionOrderByCreatedAtDesc(
             Post.PostStatus status, Subdivision subdivision);
 
-    List<Post> findByStatusAndSubdivisionInOrderByCreatedAtDesc(
+    List<Post> findByStatusAndSubdivisionInAndHiddenFromFeedFalseOrderByCreatedAtDesc(
             Post.PostStatus status, java.util.Collection<Subdivision> subdivisions);
 
         }

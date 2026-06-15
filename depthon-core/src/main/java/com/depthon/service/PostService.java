@@ -70,12 +70,11 @@ public class PostService {
     }
 
     public List<Post> getFeedForUser(User user) {
-        // Combine the home field + everything they follow
         java.util.Set<Subdivision> feedSubdivisions = new java.util.HashSet<>();
-        feedSubdivisions.add(user.getSubdivision());            // home (always included)
-        feedSubdivisions.addAll(user.getFollowedSubdivisions()); // plus follows
+        feedSubdivisions.add(user.getSubdivision());
+        feedSubdivisions.addAll(user.getFollowedSubdivisions());
 
-        return postRepository.findByStatusAndSubdivisionInOrderByCreatedAtDesc(
+        return postRepository.findByStatusAndSubdivisionInAndHiddenFromFeedFalseOrderByCreatedAtDesc(
                 Post.PostStatus.APPROVED, feedSubdivisions);
     }
 }
