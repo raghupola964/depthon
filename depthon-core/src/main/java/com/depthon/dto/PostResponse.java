@@ -6,8 +6,10 @@ import java.time.LocalDateTime;
 
 import com.depthon.domain.Subdivision;
 
+import java.io.Serializable;
+
 @Data
-public class PostResponse {
+public class PostResponse implements Serializable {
 
     private Long id;
     private String title;

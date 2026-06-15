@@ -3,6 +3,7 @@ package com.depthon.service;
 import com.depthon.domain.Subdivision;
 import com.depthon.dto.CreatePostRequest;
 import com.depthon.dto.JudgeVerdict;
+import com.depthon.dto.PostResponse;
 import com.depthon.model.Post;
 import com.depthon.model.User;
 import com.depthon.repository.PostRepository;
@@ -10,6 +11,8 @@ import com.depthon.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
+import org.springframework.cache.annotation.Cacheable;
 
 
 @Service
@@ -66,13 +69,16 @@ public class PostService {
         return postRepository.findByStatusAndSubdivisionOrderByCreatedAtDesc(
                 Post.PostStatus.APPROVED, subdivision);
     }
-
-    public List<Post> getFeedForUser(User user) {
+    @Cacheable(value = "userFeed", key = "#user.id")
+    public List<PostResponse> getFeedForUser(User user) {
         java.util.Set<Subdivision> feedSubdivisions = new java.util.HashSet<>();
         feedSubdivisions.add(user.getSubdivision());
         feedSubdivisions.addAll(user.getFollowedSubdivisions());
 
-        return postRepository.findByStatusAndSubdivisionInAndHiddenFromFeedFalseOrderByCreatedAtDesc(
+        List<Post> posts = postRepository.findByStatusAndSubdivisionInAndHiddenFromFeedFalseOrderByCreatedAtDesc(
                 Post.PostStatus.APPROVED, feedSubdivisions);
+
+        // Convert to DTOs HERE, so the CACHED value is the serializable DTO list
+        return posts.stream().map(PostResponse::from).toList();
     }
 }

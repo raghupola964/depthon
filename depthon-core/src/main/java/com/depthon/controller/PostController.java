@@ -57,13 +57,11 @@ public class PostController {
                         .map(PostResponse::from)
                         .toList());
     }
-
+    
     @GetMapping("/feed/mine")
     public ResponseEntity<List<PostResponse>> myFeed(Principal principal) {
-        String email = principal.getName();              // who's asking (from the token)
-        User user = userService.findByEmail(email);      // look them up
-        List<Post> posts = postService.getFeedForUser(user);
-        return ResponseEntity.ok(
-                posts.stream().map(PostResponse::from).toList());
+        User user = userService.findByEmail(principal.getName());
+        List<PostResponse> feed = postService.getFeedForUser(user);
+        return ResponseEntity.ok(feed);
     }
 }
