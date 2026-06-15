@@ -23,6 +23,28 @@ function App() {
     }
     return subValue;
   }
+  const [reportMsg, setReportMsg] = useState({});  // per-post report messages
+
+  function reportPost(postId) {
+    fetch("http://localhost:8080/api/posts/" + postId + "/report", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + getToken() },
+    })
+      .then(async (r) => {
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error || "Could not report");
+        return data;
+      })
+      .then((data) => {
+        // show the server's message under this post
+        setReportMsg((prev) => ({ ...prev, [postId]: data.message }));
+        loadFeed();  // refresh — if it just got hidden, it'll disappear
+      })
+      .catch((err) => {
+        setReportMsg((prev) => ({ ...prev, [postId]: err.message }));
+      });
+  }
+
   function loadFeed() {
     fetch("http://localhost:8080/api/posts/feed/mine", {
       headers: { "Authorization": "Bearer " + getToken() },  // attach the token
@@ -130,16 +152,28 @@ function App() {
                   <h2 className="text-base font-semibold tracking-tight mb-2">{post.title}</h2>
                   <p className="text-sm leading-relaxed text-zinc-400 mb-3">{post.content}</p>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="h-5 w-5 rounded-full border border-white/10 bg-gradient-to-br from-zinc-600 to-zinc-900"></div>
-                      <span className="text-xs text-zinc-500">{post.authorUsername}</span>
-                    </div>
-                    {post.subdivision && (
-                      <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-zinc-400">
-                        {labelForSubdivision(post.subdivision)}
-                      </span>
-                    )}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full border border-white/10 bg-gradient-to-br from-zinc-600 to-zinc-900"></div>
+                  <span className="text-xs text-zinc-500">{post.authorUsername}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  {post.subdivision && (
+                    <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-zinc-400">
+                      {labelForSubdivision(post.subdivision)}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => reportPost(post.id)}
+                    className="text-xs text-zinc-600 hover:text-red-400 transition-colors"
+                    title="Report as wrong field"
+                  >
+                    Report
+                  </button>
+                </div>
+              </div>
+              {reportMsg[post.id] && (
+                <p className="mt-2 text-xs text-amber-400/80">{reportMsg[post.id]}</p>
+              )}
                 </div>
               ))}
             </div>
