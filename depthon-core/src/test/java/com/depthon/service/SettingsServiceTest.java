@@ -63,19 +63,19 @@ class SettingsServiceTest {
         assertTrue(user.getFollowedSubdivisions().contains(Subdivision.DATA_SCIENTIST));
     }
 
-    /* @Test
+    @Test
     void followSubdivision_thirdDivision_isBlocked() {
-        // ARRANGE: a Software Developer (IT) who ALREADY follows an AI field
+        // ARRANGE: a Software Developer (IT) who already follows a FINANCE field
+        // So they span 2 divisions: IT (home) + FINANCE (followed)
         User user = makeSoftwareDeveloper();
-        user.getFollowedSubdivisions().add(Subdivision.DATA_SCIENTIST);  // now spans IT + AI (2)
+        user.getFollowedSubdivisions().add(Subdivision.FINANCIAL_ANALYST);  // adds FINANCE
         when(userRepository.findByEmail("dev@depthon.com")).thenReturn(Optional.of(user));
 
-        // ACT + ASSERT: following a 3rd division must throw
-        // (NOTE: this assumes a 3rd division exists in your taxonomy. See note below.)
+        // ACT + ASSERT: following a HEALTHCARE field would be a 3rd division -> must throw
         Exception thrown = assertThrows(RuntimeException.class, () -> {
-            settingsService.followSubdivision("dev@depthon.com", Subdivision.SOFTWARE_DEVELOPER);
+            settingsService.followSubdivision("dev@depthon.com", Subdivision.REGISTERED_NURSE);
         });
-    } */
+    }
 
     @Test
     void unfollowSubdivision_homeField_isBlocked() {
