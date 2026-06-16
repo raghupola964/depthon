@@ -1,6 +1,6 @@
-// The profession taxonomy for the signup dropdowns.
-// Keys = divisions (the enum names the backend expects).
-// Values = the subdivisions under each (also enum names).
+// The profession taxonomy for the signup/settings dropdowns.
+// Keys = divisions (must match the Java Division enum names EXACTLY).
+// Each subdivision value must match the Java Subdivision enum name EXACTLY.
 
 export const TAXONOMY = {
   INFORMATION_TECHNOLOGY: {
@@ -11,8 +11,11 @@ export const TAXONOMY = {
       { value: "DATA_ENGINEER", label: "Data Engineer" },
       { value: "CLOUD_ENGINEER", label: "Cloud Engineer" },
       { value: "DEVOPS_ENGINEER", label: "DevOps Engineer" },
-      { value: "CYBERSECURITY", label: "Cybersecurity" },
+      { value: "CYBERSECURITY_ANALYST", label: "Cybersecurity Analyst" },
       { value: "QA_TEST_ENGINEER", label: "QA / Test Engineer" },
+      { value: "SYSTEMS_ADMINISTRATOR", label: "Systems Administrator" },
+      { value: "NETWORK_ENGINEER", label: "Network Engineer" },
+      { value: "IT_SUPPORT_SPECIALIST", label: "IT Support Specialist" },
     ],
   },
   ARTIFICIAL_INTELLIGENCE: {
@@ -23,6 +26,111 @@ export const TAXONOMY = {
       { value: "AI_RESEARCHER", label: "AI Researcher" },
       { value: "MLOPS_ENGINEER", label: "MLOps Engineer" },
       { value: "NLP_ENGINEER", label: "NLP Engineer" },
+      { value: "COMPUTER_VISION_ENGINEER", label: "Computer Vision Engineer" },
+      { value: "AI_PRODUCT_MANAGER", label: "AI Product Manager" },
+      { value: "PROMPT_ENGINEER", label: "Prompt Engineer" },
+    ],
+  },
+  HEALTHCARE: {
+    label: "Healthcare",
+    subdivisions: [
+      { value: "PHYSICIAN", label: "Physician" },
+      { value: "REGISTERED_NURSE", label: "Registered Nurse" },
+      { value: "PHARMACIST", label: "Pharmacist" },
+      { value: "PHYSICAL_THERAPIST", label: "Physical Therapist" },
+      { value: "MEDICAL_LAB_TECHNICIAN", label: "Medical Lab Technician" },
+      { value: "RADIOLOGIC_TECHNOLOGIST", label: "Radiologic Technologist" },
+      { value: "HEALTHCARE_ADMINISTRATOR", label: "Healthcare Administrator" },
+      { value: "MENTAL_HEALTH_COUNSELOR", label: "Mental Health Counselor" },
+    ],
+  },
+  FINANCE: {
+    label: "Finance",
+    subdivisions: [
+      { value: "FINANCIAL_ANALYST", label: "Financial Analyst" },
+      { value: "INVESTMENT_BANKER", label: "Investment Banker" },
+      { value: "ACCOUNTANT", label: "Accountant" },
+      { value: "FINANCIAL_ADVISOR", label: "Financial Advisor" },
+      { value: "AUDITOR", label: "Auditor" },
+      { value: "PORTFOLIO_MANAGER", label: "Portfolio Manager" },
+      { value: "RISK_ANALYST", label: "Risk Analyst" },
+      { value: "TAX_SPECIALIST", label: "Tax Specialist" },
+    ],
+  },
+  BUSINESS_AND_MANAGEMENT: {
+    label: "Business & Management",
+    subdivisions: [
+      { value: "PRODUCT_MANAGER", label: "Product Manager" },
+      { value: "PROJECT_MANAGER", label: "Project Manager" },
+      { value: "BUSINESS_ANALYST", label: "Business Analyst" },
+      { value: "OPERATIONS_MANAGER", label: "Operations Manager" },
+      { value: "MANAGEMENT_CONSULTANT", label: "Management Consultant" },
+      { value: "HUMAN_RESOURCES_MANAGER", label: "Human Resources Manager" },
+      { value: "SUPPLY_CHAIN_MANAGER", label: "Supply Chain Manager" },
+      { value: "ENTREPRENEUR", label: "Entrepreneur / Founder" },
+    ],
+  },
+  ENGINEERING: {
+    label: "Engineering",
+    subdivisions: [
+      { value: "MECHANICAL_ENGINEER", label: "Mechanical Engineer" },
+      { value: "ELECTRICAL_ENGINEER", label: "Electrical Engineer" },
+      { value: "CIVIL_ENGINEER", label: "Civil Engineer" },
+      { value: "CHEMICAL_ENGINEER", label: "Chemical Engineer" },
+      { value: "AEROSPACE_ENGINEER", label: "Aerospace Engineer" },
+      { value: "INDUSTRIAL_ENGINEER", label: "Industrial Engineer" },
+      { value: "BIOMEDICAL_ENGINEER", label: "Biomedical Engineer" },
+      { value: "ENVIRONMENTAL_ENGINEER", label: "Environmental Engineer" },
+    ],
+  },
+  ARCHITECTURE_AND_CONSTRUCTION: {
+    label: "Architecture & Construction",
+    subdivisions: [
+      { value: "ARCHITECT", label: "Architect" },
+      { value: "STRUCTURAL_ENGINEER", label: "Structural Engineer" },
+      { value: "URBAN_PLANNER", label: "Urban Planner" },
+      { value: "CONSTRUCTION_MANAGER", label: "Construction Manager" },
+      { value: "INTERIOR_DESIGNER", label: "Interior Designer" },
+      { value: "LANDSCAPE_ARCHITECT", label: "Landscape Architect" },
+      { value: "QUANTITY_SURVEYOR", label: "Quantity Surveyor" },
+    ],
+  },
+  MARKETING_AND_SALES: {
+    label: "Marketing & Sales",
+    subdivisions: [
+      { value: "DIGITAL_MARKETER", label: "Digital Marketer" },
+      { value: "SALES_MANAGER", label: "Sales Manager" },
+      { value: "CONTENT_STRATEGIST", label: "Content Strategist" },
+      { value: "SEO_SPECIALIST", label: "SEO Specialist" },
+      { value: "BRAND_MANAGER", label: "Brand Manager" },
+      { value: "SOCIAL_MEDIA_MANAGER", label: "Social Media Manager" },
+      { value: "ACCOUNT_EXECUTIVE", label: "Account Executive" },
+      { value: "MARKETING_ANALYST", label: "Marketing Analyst" },
+    ],
+  },
+  EDUCATION: {
+    label: "Education",
+    subdivisions: [
+      { value: "TEACHER", label: "Teacher" },
+      { value: "PROFESSOR", label: "Professor" },
+      { value: "INSTRUCTIONAL_DESIGNER", label: "Instructional Designer" },
+      { value: "ACADEMIC_RESEARCHER", label: "Academic Researcher" },
+      { value: "EDUCATION_ADMINISTRATOR", label: "Education Administrator" },
+      { value: "SCHOOL_COUNSELOR", label: "School Counselor" },
+      { value: "CURRICULUM_DEVELOPER", label: "Curriculum Developer" },
+    ],
+  },
+  DESIGN_AND_CREATIVE: {
+    label: "Design & Creative",
+    subdivisions: [
+      { value: "UX_DESIGNER", label: "UX Designer" },
+      { value: "GRAPHIC_DESIGNER", label: "Graphic Designer" },
+      { value: "PRODUCT_DESIGNER", label: "Product Designer" },
+      { value: "MOTION_DESIGNER", label: "Motion Designer" },
+      { value: "ILLUSTRATOR", label: "Illustrator" },
+      { value: "UI_DESIGNER", label: "UI Designer" },
+      { value: "UX_RESEARCHER", label: "UX Researcher" },
+      { value: "CONTENT_WRITER", label: "Content Writer" },
     ],
   },
 };
