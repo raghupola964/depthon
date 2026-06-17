@@ -22,6 +22,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final GatekeeperClient gatekeeperClient;
+    private final JudgingProducer judgingProducer;
 
     public Post createPost(CreatePostRequest request, String authorEmail) {
         User author = userRepository.findByEmail(authorEmail)
@@ -41,20 +42,13 @@ public class PostService {
         post.setDivision(author.getDivision());
 
         post.setStatus(Post.PostStatus.PENDING);
-
         Post saved = postRepository.save(post);
 
-        try {
-            JudgeVerdict verdict = gatekeeperClient.judge(
-                    saved.getId(), saved.getTitle(), saved.getContent());
-            saved.setStatus(Post.PostStatus.valueOf(verdict.getDecision()));
-            saved.setModerationFeedback(verdict.getFeedback());
-            saved = postRepository.save(saved);
-        } catch (Exception e) {
-            System.err.println("Gatekeeper unavailable: " + e.getMessage());
-        }
+        // Send the post to the judging queue (async) instead of judging here.
+        // The post stays PENDING; a Kafka consumer will judge it in the background.
+        judgingProducer.sendPostForJudging(saved.getId());
 
-        return saved;
+        return saved;   // returns immediately, still PENDING - user isn't blocked
     }
 
     public List<Post> getApprovedFeed() {

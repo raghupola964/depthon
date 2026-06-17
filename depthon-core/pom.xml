@@ -46,6 +46,11 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Spring Kafka - for messaging between microservices -->
+        <dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
 
         <!-- Spring Security - for JWT auth later -->
         <dependency>
