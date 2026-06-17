@@ -2,7 +2,7 @@ package com.depthon.service;
 
 import com.depthon.domain.Subdivision;
 import com.depthon.dto.CreatePostRequest;
-import com.depthon.dto.JudgeVerdict;
+//import com.depthon.dto.JudgeVerdict;
 import com.depthon.dto.PostResponse;
 import com.depthon.model.Post;
 import com.depthon.model.User;
@@ -21,7 +21,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final GatekeeperClient gatekeeperClient;
+    //private final GatekeeperClient gatekeeperClient;
     private final JudgingProducer judgingProducer;
 
     public Post createPost(CreatePostRequest request, String authorEmail) {
