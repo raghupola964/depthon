@@ -76,6 +76,15 @@ function App() {
     if (loggedIn) loadFeed();
   }, [loggedIn]);
 
+  // Poll the feed every 5 seconds so posts judged in the background appear automatically
+  useEffect(() => {
+    if (!loggedIn || view !== "feed") return;
+    const interval = setInterval(() => {
+      loadFeed();
+    }, 5000);
+    return () => clearInterval(interval);  // stop polling when leaving feed / logging out
+  }, [loggedIn, view]);
+
   function handleLogout() {
     clearToken();
     setLoggedIn(false);

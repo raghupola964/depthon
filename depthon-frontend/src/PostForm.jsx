@@ -38,9 +38,10 @@ function PostForm({ onPostJudged }) {
       });
   }
 
-  const isApproved = verdict?.status === "APPROVED";
-  const verdictColor = isApproved
-    ? "border-green-500/40 bg-green-500/10 text-green-300"
+  const isPending = verdict?.status === "PENDING";
+  const isBlocked = verdict?.status === "BLOCKED";
+  const verdictColor = isPending
+    ? "border-blue-500/40 bg-blue-500/10 text-blue-300"
     : "border-red-500/40 bg-red-500/10 text-red-300";
 
   return (
@@ -67,18 +68,23 @@ function PostForm({ onPostJudged }) {
         disabled={submitting}
         className="rounded-lg bg-zinc-100 px-5 py-2.5 text-sm font-semibold text-black transition-all hover:bg-white active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {submitting ? "The Gatekeeper is judging..." : "Submit to the Gatekeeper"}
-      </button>
+        {submitting ? "Submitting..." : "Submit to the Gatekeeper"}      </button>
 
       {verdict && (
         <div className={`mt-4 rounded-xl border px-4 py-3 animate-fadeUp ${verdictColor}`}>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-bold tracking-wider">● {verdict.status}</span>
-            {verdict.insight_score != null && (
-              <span className="text-xs text-zinc-500">insight score {verdict.insight_score}</span>
-            )}
-          </div>
-          <p className="text-sm leading-relaxed text-zinc-400">{verdict.feedback}</p>
+          {isPending ? (
+            <>
+              <div className="text-xs font-bold tracking-wider mb-1">● UNDER REVIEW</div>
+              <p className="text-sm leading-relaxed text-zinc-400">
+                Your post has been submitted and the Gatekeeper is reviewing it. It will appear in the feed once approved.
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="text-xs font-bold tracking-wider mb-1">● {verdict.status}</div>
+              <p className="text-sm leading-relaxed text-zinc-400">{verdict.feedback}</p>
+            </>
+          )}
         </div>
       )}
     </div>
