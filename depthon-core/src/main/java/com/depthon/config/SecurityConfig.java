@@ -37,6 +37,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**", "/error").permitAll()
                 // Public: anyone can READ the feed (GET only)
                 .requestMatchers(HttpMethod.GET, "/api/posts/feed").permitAll()
+                // Public: the WebSocket endpoint (SockJS handshake has no token)
+                .requestMatchers("/ws/**").permitAll()
                 // Everything else requires a valid token
                 .anyRequest().authenticated()
             )
@@ -52,12 +54,13 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of("http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        return request -> {
-            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-            source.registerCorsConfiguration("/**", config);
-            return config;
-        };
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -52,6 +52,12 @@
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
 
+        <!-- Spring WebSocket - for real-time updates to the frontend -->
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
         <!-- Spring Security - for JWT auth later -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

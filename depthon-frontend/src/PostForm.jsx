@@ -1,5 +1,6 @@
-import { useState } from "react";
-
+import { useState, useRef } from "react";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 import { getToken } from "./auth";
 
 function PostForm({ onPostJudged }) {
@@ -7,6 +8,7 @@ function PostForm({ onPostJudged }) {
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [verdict, setVerdict] = useState(null);
+  const stompClientRef = useRef(null);
 
   function handleSubmit() {
     setSubmitting(true);
@@ -18,7 +20,7 @@ function PostForm({ onPostJudged }) {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + getToken(),
       },
-      body: JSON.stringify({ title, content}),
+      body: JSON.stringify({ title, content }),
     })
       .then(async (response) => {
         const data = await response.json();
@@ -26,11 +28,15 @@ function PostForm({ onPostJudged }) {
         return data;
       })
       .then((data) => {
+        // data.id = new post's ID, data.status = PENDING
         setVerdict(data);
         setSubmitting(false);
         setTitle("");
         setContent("");
         if (onPostJudged) onPostJudged();
+
+        // Start listening for THIS post's verdict over WebSocket
+        listenForVerdict(data.id);
       })
       .catch((err) => {
         setVerdict({ status: "BLOCKED", feedback: err.message });
@@ -38,9 +44,40 @@ function PostForm({ onPostJudged }) {
       });
   }
 
+  function listenForVerdict(postId) {
+    // Clean up any previous connection
+    if (stompClientRef.current) {
+      stompClientRef.current.deactivate();
+    }
+
+    const client = new Client({
+      webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+      onConnect: () => {
+        client.subscribe("/topic/verdicts", (message) => {
+          const verdictData = JSON.parse(message.body);
+          // Only react if it's the verdict for the post WE just submitted
+          if (verdictData.postId === postId) {
+            setVerdict({
+              status: verdictData.status,
+              feedback: verdictData.feedback,
+            });
+            // Refresh the feed so a newly-approved post appears right away
+            if (onPostJudged) onPostJudged();
+            client.deactivate(); // got our verdict, disconnect
+          }
+        });
+      },
+    });
+
+    client.activate();
+    stompClientRef.current = client;
+  }
+
   const isPending = verdict?.status === "PENDING";
-  const isBlocked = verdict?.status === "BLOCKED";
-  const verdictColor = isPending
+  const isApproved = verdict?.status === "APPROVED";
+  const verdictColor = isApproved
+    ? "border-green-500/40 bg-green-500/10 text-green-300"
+    : isPending
     ? "border-blue-500/40 bg-blue-500/10 text-blue-300"
     : "border-red-500/40 bg-red-500/10 text-red-300";
 
@@ -68,7 +105,8 @@ function PostForm({ onPostJudged }) {
         disabled={submitting}
         className="rounded-lg bg-zinc-100 px-5 py-2.5 text-sm font-semibold text-black transition-all hover:bg-white active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {submitting ? "Submitting..." : "Submit to the Gatekeeper"}      </button>
+        {submitting ? "Submitting..." : "Submit to the Gatekeeper"}
+      </button>
 
       {verdict && (
         <div className={`mt-4 rounded-xl border px-4 py-3 animate-fadeUp ${verdictColor}`}>
@@ -76,7 +114,7 @@ function PostForm({ onPostJudged }) {
             <>
               <div className="text-xs font-bold tracking-wider mb-1">● UNDER REVIEW</div>
               <p className="text-sm leading-relaxed text-zinc-400">
-                Your post has been submitted and the Gatekeeper is reviewing it. It will appear in the feed once approved.
+                Submitted! The Gatekeeper is reviewing your post...
               </p>
             </>
           ) : (
